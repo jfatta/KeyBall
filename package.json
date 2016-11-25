@@ -1,5 +1,20 @@
 {
-  "name"    : "keyball",
-  "version" : "0.1.0",
-  "main"    : "main.js"
+  "name": "keyball",
+  "productName": "KeyBall",
+  "description": "Azure Key Vault reader tool",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager ./ --platform=darwin,win32 --arch=x64 --prune --overwrite"
+  },
+  "author": "@jorgefatta",
+  "dependencies": {
+    "azure-keyvault" : "^0.11.0"
+  },
+  "devDependencies": {
+    "electron-packager": "^7.3.0",
+    "electron-prebuilt": "^1.2.0",
+    "eslint": "^3.1.1",
+    "eslint-plugin-import": "^1.11.1"
+  }
 }

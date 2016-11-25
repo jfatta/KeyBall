@@ -1,42 +1,75 @@
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
-const url = require('url')
+const { app, BrowserWindow, ipcMain } = require('electron')
+var KeyVault = require('azure-keyvault')
+var AuthenticationContext = require('adal-node').AuthenticationContext
+
+var clientId = 'client id here'
+var clientSecret = 'secret here'
+
+// Authenticator - retrieves the access token
+var authenticator = function (challenge, callback) {
+  // Create a new authentication context.
+  var context = new AuthenticationContext(challenge.authorization)
+  // Use the context to acquire an authentication token
+  return context.acquireTokenWithClientCredentials(challenge.resource, clientId, clientSecret, function (err, tokenResponse) {
+    if (err) throw err
+    // Calculate the value to be set in the request's Authorization header and resume the call.
+    var authorizationValue = tokenResponse.tokenType + ' ' + tokenResponse.accessToken
+    return callback(null, authorizationValue)
+  })
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win
+let mainWindow
+
+var credentials = new KeyVault.KeyVaultCredentials(authenticator)
+var client = new KeyVault.KeyVaultClient(credentials)
 
 function createWindow () {
-  // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600})
-
-  // and load the index.html of the app.
-  win.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
-
-  // Open the DevTools.
-  win.webContents.openDevTools()
-
-  // Emitted when the window is closed.
-  win.on('closed', () => {
+  mainWindow = new BrowserWindow({ width: 720, height: 480, titleBarStyle: 'hidden' })
+  mainWindow.loadURL(`file://${__dirname}/index.html`)
+  mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    win = null
+    mainWindow = null
   })
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('did-finish-load')
+  })
+}
+
+function handleSubmission () {
+  ipcMain.on('did-submit-form', (event, argument) => {
+    const { placeholder } = argument
+    console.log(argument)
+    client.getSecret(GetSecretUri(placeholder), function (getErr, getSecretBundle) {
+      if (getErr) {
+        console.log(getErr)
+        event.sender.send('processing-did-fail', getErr)
+      } else {
+        console.log('\n\nSecret ', getSecretBundle.id, ' is retrieved.\n')
+        event.sender.send('processing-did-succeed', getSecretBundle.value)
+      }
+    })
+  })
+}
+
+function GetSecretUri (userInput) {
+  var segments = userInput.split(':')
+  return `https://${segments[0]}.vault.azure.net/secrets/${segments[1]}`
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  handleSubmission()
+})
 
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
+  // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit()
@@ -44,12 +77,9 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
+  // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (win === null) {
+  if (mainWindow === null) {
     createWindow()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

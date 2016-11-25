@@ -1,13 +1,46 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chrome <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-  </body>
+    <link rel="stylesheet" href="foundation.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<form>
+    <div class="row">
+        <div class="medium-12 columns">
+            <h1>KeyBall</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-12 columns">
+            <label>
+                Placeholder or vault:secret
+                <span class="input-group">
+                    <input class="input-group-field" type="text" name="placeholder" placeholder="#{keuvault:vault:secret}">
+                </span>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-12 columns">
+            <label>
+                Result
+                <span class="input-group">
+                    <input class="input-group-field" type="text" name="result">
+                </span>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-12 columns">
+            <button class="large expanded button" type="submit">fetch</button>
+        </div>
+    </div>
+</form>
+</body>
+<script>
+    // You can also require other files to run in this process
+    require('./renderer.js')
+</script>
 </html>
