@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu, Tray } = require('electron')
 var KeyVault = require('azure-keyvault')
 var AuthenticationContext = require('adal-node').AuthenticationContext
 var placeholderHelper = require('./placeholderHelper.js')
@@ -22,7 +22,7 @@ var authenticator = function (challenge, callback) {
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-
+var appIcon = null
 var credentials = new KeyVault.KeyVaultCredentials(authenticator)
 var client = new KeyVault.KeyVaultClient(credentials)
 
@@ -42,6 +42,19 @@ function createWindow () {
   })
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('did-finish-load')
+  })
+
+  mainWindow.on('minimize', function (event) {
+    event.preventDefault()
+    mainWindow.hide()
+  })
+
+  mainWindow.on('close', function (event) {
+    if (!app.isQuiting) {
+      event.preventDefault()
+      mainWindow.hide()
+    }
+    return false
   })
 }
 
@@ -71,6 +84,24 @@ function GetSecretUri (userInput) {
 app.on('ready', () => {
   createWindow()
   handleSubmission()
+  appIcon = new Tray('./images/keyball.png')
+  var contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show KeyBall',
+      click: function () {
+        mainWindow.show()
+      }
+    },
+    {
+      label: 'Quit',
+      click: function () {
+        app.isQuiting = true
+        app.quit()
+      }
+    }
+  ])
+  appIcon.setToolTip('KeyBall')
+  appIcon.setContextMenu(contextMenu)
 })
 
 app.on('window-all-closed', () => {
