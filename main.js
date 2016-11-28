@@ -3,8 +3,8 @@ var KeyVault = require('azure-keyvault')
 var AuthenticationContext = require('adal-node').AuthenticationContext
 var placeholderHelper = require('./placeholderHelper.js')
 
-var clientId = ''
-var clientSecret = ''
+var clientId = process.env.KeyholdR_ClientId
+var clientSecret = process.env.KeyholdR_Secret
 
 // Authenticator - retrieves the access token
 var authenticator = function (challenge, callback) {
