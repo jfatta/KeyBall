@@ -22,6 +22,15 @@ ipcRenderer.on('did-finish-load', () => {
 
 ipcRenderer.on('processing-did-succeed', (event, secret) => {
   inputs.result.value = secret
+  var notif = new window.Notification('Secret fetched', {
+    body: `the secret ${inputs.placeholder.value} was sucessfully fetched.`,
+    silent: true // We'll play our own sound
+  })
+
+  // If the user clicks in the Notifications Center, show the app
+  notif.onclick = function () {
+    ipcRenderer.send('focusWindow', 'main')
+  }
 })
 
 ipcRenderer.on('processing-did-fail', (event, error) => {
@@ -38,4 +47,14 @@ form.addEventListener('submit', (event) => {
 buttons.copyToClipboard.addEventListener('click', () => {
   console.log('copying ', inputs.result.value)
   clipboard.writeText(inputs.result.value)
+
+  var notif = new window.Notification('Secret copied', {
+    body: `the secret ${inputs.placeholder.value} was copied to clipboard.`,
+    silent: true // We'll play our own sound
+  })
+
+  // If the user clicks in the Notifications Center, show the app
+  notif.onclick = function () {
+    ipcRenderer.send('focusWindow', 'main')
+  }
 })
