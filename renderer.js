@@ -2,7 +2,7 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, clipboard } = require('electron')
 const setApplicationMenu = require('./menu')
 
 const form = document.querySelector('form')
@@ -12,17 +12,19 @@ const inputs = {
   result: form.querySelector('input[name="result"]')
 }
 
+const buttons = {
+  copyToClipboard: document.getElementById('copyToClipboard')
+}
+
 ipcRenderer.on('did-finish-load', () => {
   setApplicationMenu()
 })
 
 ipcRenderer.on('processing-did-succeed', (event, secret) => {
-  window.alert(secret)
   inputs.result.value = secret
 })
 
 ipcRenderer.on('processing-did-fail', (event, error) => {
-  console.error(JSON.stringify(error))
   window.alert(JSON.stringify(error))
 })
 
@@ -31,4 +33,9 @@ form.addEventListener('submit', (event) => {
   ipcRenderer.send('did-submit-form', {
     placeholder: inputs.placeholder.value
   })
+})
+
+buttons.copyToClipboard.addEventListener('click', () => {
+  console.log('copying ', inputs.result.value)
+  clipboard.writeText(inputs.result.value)
 })

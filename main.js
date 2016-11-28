@@ -27,7 +27,7 @@ var credentials = new KeyVault.KeyVaultCredentials(authenticator)
 var client = new KeyVault.KeyVaultClient(credentials)
 
 function createWindow () {
-  mainWindow = new BrowserWindow({ width: 720, height: 480, titleBarStyle: 'hidden' })
+  mainWindow = new BrowserWindow({ width: 720, height: 400, titleBarStyle: 'hidden' })
   mainWindow.loadURL(`file://${__dirname}/index.html`)
   mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
@@ -46,10 +46,8 @@ function handleSubmission () {
     console.log(argument)
     client.getSecret(GetSecretUri(placeholder), function (getErr, getSecretBundle) {
       if (getErr) {
-        console.log(getErr)
         event.sender.send('processing-did-fail', getErr)
       } else {
-        console.log('\n\nSecret ', getSecretBundle.id, ' is retrieved.\n')
         event.sender.send('processing-did-succeed', getSecretBundle.value)
       }
     })
