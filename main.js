@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, Menu, Tray } = require('electron')
+var path = require('path')
 var KeyVault = require('azure-keyvault')
 var AuthenticationContext = require('adal-node').AuthenticationContext
 var placeholderHelper = require('./placeholderHelper.js')
@@ -26,12 +27,14 @@ var appIcon = null
 var credentials = new KeyVault.KeyVaultCredentials(authenticator)
 var client = new KeyVault.KeyVaultClient(credentials)
 
+var iconPath = path.join(__dirname, 'images', 'keyball.png')
+
 function createWindow () {
   mainWindow = new BrowserWindow({
     width: 720,
     height: 255,
     titleBarStyle: 'hidden',
-    icon: './images/keyball.png'
+    icon: iconPath
   })
   mainWindow.loadURL(`file://${__dirname}/index.html`)
   mainWindow.on('closed', () => {
@@ -84,7 +87,7 @@ function GetSecretUri (userInput) {
 app.on('ready', () => {
   createWindow()
   handleSubmission()
-  appIcon = new Tray('./images/keyball.png')
+  appIcon = new Tray(iconPath)
   var contextMenu = Menu.buildFromTemplate([
     {
       label: 'Show KeyBall',
