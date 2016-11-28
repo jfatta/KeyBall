@@ -3,7 +3,6 @@
 // All of the Node.js APIs are available in this process.
 
 const { ipcRenderer, clipboard } = require('electron')
-const setApplicationMenu = require('./menu')
 
 const form = document.querySelector('form')
 
@@ -15,10 +14,6 @@ const inputs = {
 const buttons = {
   copyToClipboard: document.getElementById('copyToClipboard')
 }
-
-ipcRenderer.on('did-finish-load', () => {
-  setApplicationMenu()
-})
 
 ipcRenderer.on('processing-did-succeed', (event, secret) => {
   inputs.result.value = secret
