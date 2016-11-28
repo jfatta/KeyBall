@@ -1,9 +1,10 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 var KeyVault = require('azure-keyvault')
 var AuthenticationContext = require('adal-node').AuthenticationContext
+var placeholderHelper = require('./placeholderHelper.js')
 
-var clientId = 'client id here'
-var clientSecret = 'secret here'
+var clientId = ''
+var clientSecret = ''
 
 // Authenticator - retrieves the access token
 var authenticator = function (challenge, callback) {
@@ -56,7 +57,8 @@ function handleSubmission () {
 }
 
 function GetSecretUri (userInput) {
-  var segments = userInput.split(':')
+  // var segments = userInput.split(':')
+  var segments = placeholderHelper.parse(userInput)
   return `https://${segments[0]}.vault.azure.net/secrets/${segments[1]}`
 }
 
