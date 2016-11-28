@@ -27,7 +27,12 @@ var credentials = new KeyVault.KeyVaultCredentials(authenticator)
 var client = new KeyVault.KeyVaultClient(credentials)
 
 function createWindow () {
-  mainWindow = new BrowserWindow({ width: 720, height: 255, titleBarStyle: 'hidden' })
+  mainWindow = new BrowserWindow({
+    width: 720,
+    height: 255,
+    titleBarStyle: 'hidden',
+    icon: './images/keyball.png'
+  })
   mainWindow.loadURL(`file://${__dirname}/index.html`)
   mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
