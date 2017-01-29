@@ -1,7 +1,7 @@
 # KeyBall
 Minimalist Azure Key Vault secret reader.
 
-![keyball_screenshot01](https://cloud.githubusercontent.com/assets/11925502/20709862/5f8d18d2-b616-11e6-969d-6cc4c9afaf9b.png)
+![keyball_screenshot01](https://cloud.githubusercontent.com/assets/11925502/22401781/af14914a-e5bf-11e6-9001-a09b6a2b9f6a.png)
 
 ### Build
 electron-packager C:\workspace\KeyBall KeyBall --platform=win
