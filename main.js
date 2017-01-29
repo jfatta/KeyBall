@@ -47,11 +47,6 @@ function createWindow () {
     mainWindow.webContents.send('did-finish-load')
   })
 
-  mainWindow.on('minimize', function (event) {
-    event.preventDefault()
-    mainWindow.hide()
-  })
-
   mainWindow.on('close', function (event) {
     if (!app.isQuiting) {
       event.preventDefault()
