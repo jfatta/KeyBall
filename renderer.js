@@ -34,6 +34,7 @@ ipcRenderer.on('processing-did-fail', (event, error) => {
 
 form.addEventListener('submit', (event) => {
   event.preventDefault()
+  inputs.result.value = ''
   ipcRenderer.send('did-submit-form', {
     placeholder: inputs.placeholder.value
   })
